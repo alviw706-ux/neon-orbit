@@ -112,16 +112,16 @@ export function PlayPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div className="flex h-[calc(100dvh-11.25rem)] flex-col gap-3 overflow-hidden md:h-[calc(100dvh-8.25rem)] md:gap-4">
+      <header className="flex shrink-0 items-center justify-between gap-3">
+        <div className="min-w-0">
           <p className="label-eyebrow">Arcade run</p>
-          <h1 className="heading-display mt-2 text-3xl text-white sm:text-4xl">Play NEON ORBIT</h1>
-          <p className="mt-2 max-w-xl text-sm text-slate-400">
+          <h1 className="heading-display mt-1 text-xl text-white sm:text-2xl">Play NEON ORBIT</h1>
+          <p className="mt-2 hidden max-w-xl text-sm text-slate-400 xl:block">
             Survive as long as you can. Every second earns points, and chaining pickups multiplies them.
           </p>
         </div>
-        <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+        <div className="flex shrink-0 items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 sm:px-4 sm:py-3">
           <Trophy className="h-5 w-5 text-neon-amber" aria-hidden="true" />
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">Personal best</p>
@@ -130,8 +130,8 @@ export function PlayPage() {
         </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="relative h-[min(72vh,680px)] min-h-[460px] overflow-hidden rounded-3xl border border-white/10 bg-void-950 shadow-glow-blue">
+      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-3 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-[minmax(0,1fr)] lg:gap-4">
+        <div className="relative min-h-0 overflow-hidden rounded-2xl border border-white/10 bg-void-950 shadow-glow-blue sm:rounded-3xl">
           <GameStage
             key={runKey}
             ref={stageRef}
@@ -158,8 +158,8 @@ export function PlayPage() {
           )}
         </div>
 
-        <aside className="space-y-4">
-          <div className="panel p-5">
+        <aside className="grid grid-cols-2 gap-2 lg:block lg:space-y-4 lg:overflow-y-auto">
+          <div className="panel p-3 sm:p-4 lg:p-5">
             {userId ? (
               <>
                 <p className="label-eyebrow">Ranked play</p>
@@ -193,9 +193,9 @@ export function PlayPage() {
             )}
           </div>
 
-          <div className="panel p-5">
+          <div className="panel p-3 sm:p-4 lg:p-5">
             <p className="label-eyebrow">Controls</p>
-            <ul className="mt-3 space-y-2 text-sm text-slate-300">
+            <ul className="mt-2 space-y-1 text-xs text-slate-300 lg:mt-3 lg:space-y-2 lg:text-sm">
               <li>Tap the game field or press Space to switch orbit.</li>
               <li>Press P or Escape to pause.</li>
               <li>Coins are worth 5 points. Gems are worth 25 points.</li>
@@ -203,10 +203,10 @@ export function PlayPage() {
           </div>
 
           {!userId && offlineRuns.length > 0 && (
-            <div className="panel p-5">
+            <div className="col-span-2 panel p-3 sm:p-4 lg:col-span-1 lg:p-5">
               <p className="label-eyebrow">Recent practice runs</p>
-              <ul className="mt-3 divide-y divide-white/[0.06]">
-                {offlineRuns.slice(0, 5).map((run) => (
+              <ul className="mt-2 divide-y divide-white/[0.06] lg:mt-3">
+                {offlineRuns.slice(0, 3).map((run) => (
                   <li key={run.playedAt} className="flex items-center justify-between gap-3 py-2 text-sm">
                     <span className="font-semibold tabular-nums text-white">{run.score.toLocaleString()}</span>
                     <span className="flex items-center gap-2 text-xs tabular-nums text-slate-400">

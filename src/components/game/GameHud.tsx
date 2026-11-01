@@ -25,11 +25,12 @@ export function GameHud({ snapshot, onPause }: GameHudProps) {
   const active = EFFECT_ORDER.filter((kind) => snapshot.effects[kind] > 0);
 
   return (
-    <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3 sm:p-5">
+    <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-2.5 sm:p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="label-eyebrow text-slate-400">Score</p>
-          <p className="font-display text-2xl tabular-nums text-white sm:text-3xl" aria-live="off">
+          <p className="font-display text-xl tabular-nums text-white sm:text-3xl" aria-live="off">
+
             {Math.floor(snapshot.score).toLocaleString()}
           </p>
           <div className="mt-2 flex items-center gap-2">
