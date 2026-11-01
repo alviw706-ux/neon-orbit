@@ -1,0 +1,8 @@
+[functions.submit-score]
+verify_jwt = true
+
+[functions.claim-reward]
+verify_jwt = true
+
+[functions.admin-api]
+verify_jwt = true

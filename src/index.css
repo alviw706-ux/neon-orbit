@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background-color: #03040a;
+    color: #e6ecff;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply font-body antialiased min-h-screen;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(61, 123, 255, 0.18), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(178, 107, 255, 0.12), transparent);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(56, 241, 255, 0.3);
+  }
+
+  :focus-visible {
+    outline: 2px solid #38f1ff;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold text-void-950
+      bg-gradient-to-r from-neon-cyan to-neon-blue shadow-glow-cyan
+      transition duration-200 hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0
+      disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold text-slate-100
+      border border-white/10 bg-white/[0.04] backdrop-blur
+      transition duration-200 hover:border-neon-cyan/50 hover:bg-white/[0.08]
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-300
+      transition duration-200 hover:bg-white/[0.06] hover:text-white disabled:opacity-50;
+  }
+
+  .panel {
+    @apply rounded-2xl border border-white/[0.08] bg-void-800/70 backdrop-blur-xl shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)];
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-white/10 bg-void-900/80 px-4 py-3 text-slate-100 placeholder:text-slate-500
+      transition duration-200 focus:border-neon-cyan/60 focus:outline-none focus:ring-2 focus:ring-neon-cyan/20;
+  }
+
+  .label-eyebrow {
+    @apply font-display text-[11px] uppercase tracking-[0.25em] text-neon-cyan/80;
+  }
+
+  .heading-display {
+    @apply font-display tracking-wide;
+  }
+
+  .text-gradient-neon {
+    @apply bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-violet bg-clip-text text-transparent;
+  }
+}

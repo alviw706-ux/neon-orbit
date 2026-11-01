@@ -1,0 +1,17 @@
+{
+  "projectId": "72535305",
+  "functions": {
+    "admin-api": {
+      "hasChanged": false,
+      "hash": "ab133bf866ec83e0b7d70fc798b1e57c58d04c4f2904afc729da6c5e1da0701c"
+    },
+    "claim-reward": {
+      "hasChanged": false,
+      "hash": "512c9738e68316184c6a5eeb3db79e0c5b61e531c60534baad41f0b7d6032890"
+    },
+    "submit-score": {
+      "hasChanged": false,
+      "hash": "5c8c7c4a76a8aba13df0bf52d6587af4f3d5fc5ddc78e10d1cdd63aaa2769780"
+    }
+  }
+}
