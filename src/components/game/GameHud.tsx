@@ -1,4 +1,4 @@
-import { Gem, Coins, Hourglass, Magnet, Pause, Shield, Zap } from 'lucide-react';
+import { Gem, Coins, Hourglass, Magnet, Pause, Shield, ShieldCheck, Zap } from 'lucide-react';
 import type { HudSnapshot, PowerupKind } from '@/game/types';
 
 type GameHudProps = {
@@ -7,13 +7,14 @@ type GameHudProps = {
 };
 
 const EFFECT_META: Record<PowerupKind, { label: string; icon: typeof Shield; className: string }> = {
+  protection: { label: 'Protection', icon: ShieldCheck, className: 'text-white border-white/60 bg-white/10' },
   shield: { label: 'Shield', icon: Shield, className: 'text-neon-cyan border-neon-cyan/40 bg-neon-cyan/10' },
   slow: { label: 'Slow', icon: Hourglass, className: 'text-neon-violet border-neon-violet/40 bg-neon-violet/10' },
   magnet: { label: 'Magnet', icon: Magnet, className: 'text-neon-amber border-neon-amber/40 bg-neon-amber/10' },
   double: { label: 'Double', icon: Zap, className: 'text-neon-mint border-neon-mint/40 bg-neon-mint/10' },
 };
 
-const EFFECT_ORDER: PowerupKind[] = ['shield', 'slow', 'magnet', 'double'];
+const EFFECT_ORDER: PowerupKind[] = ['protection', 'shield', 'slow', 'magnet', 'double'];
 
 export function formatClock(seconds: number): string {
   const whole = Math.floor(seconds);

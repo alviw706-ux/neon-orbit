@@ -1,6 +1,6 @@
 export type Lane = 0 | 1;
 
-export type PowerupKind = 'shield' | 'slow' | 'magnet' | 'double';
+export type PowerupKind = 'shield' | 'slow' | 'magnet' | 'double' | 'protection';
 export type PickupKind = 'coin' | 'gem' | PowerupKind;
 
 export type GamePhase = 'ready' | 'playing' | 'paused' | 'over';

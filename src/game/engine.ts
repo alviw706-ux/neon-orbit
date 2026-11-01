@@ -10,6 +10,7 @@ import {
   ORB_RADIUS,
   POWERUP_DURATION_SECONDS,
   PALETTE,
+  PROTECTION_MILESTONE_POINTS,
   SURVIVAL_POINTS_PER_SECOND,
   SWITCH_LERP_RATE,
 } from '@/game/config';
@@ -40,7 +41,7 @@ export class OrbitEngine {
   obstacles: Obstacle[] = [];
   lasers: Laser[] = [];
   pickups: Pickup[] = [];
-  effects: ActiveEffects = { shield: 0, slow: 0, magnet: 0, double: 0 };
+  effects: ActiveEffects = { shield: 0, slow: 0, magnet: 0, double: 0, protection: 0 };
   readonly particles: ParticleSystem;
 
   private events: GameEvent[] = [];
@@ -48,6 +49,7 @@ export class OrbitEngine {
   private chainTimer = 0;
   private lastMultiplier = 1;
   private timers = { obstacle: 0, laser: 20, coin: 0, powerup: 8 };
+  private protectionMilestone = 0;
 
   constructor(particleDensity = 1) {
     this.particles = new ParticleSystem(particleDensity);
@@ -114,6 +116,7 @@ export class OrbitEngine {
 
     const boost = this.effects.double > 0 ? 2 : 1;
     this.score += SURVIVAL_POINTS_PER_SECOND * this.multiplier() * boost * dt;
+    this.spawnProtectionMilestones();
     this.particles.step(dt);
   }
 
@@ -225,7 +228,8 @@ export class OrbitEngine {
       return;
     }
 
-    this.effects[pickup.kind] = POWERUP_DURATION_SECONDS[pickup.kind];
+    const alreadyProtected = pickup.kind === 'protection' && this.effects.protection > 0;
+    if (!alreadyProtected) this.effects[pickup.kind] = POWERUP_DURATION_SECONDS[pickup.kind];
     this.events.push({ type: 'powerup', kind: pickup.kind });
     this.particles.ring(x, y, powerupColor(pickup.kind), 0.16, 0.5);
     this.particles.burst(x, y, powerupColor(pickup.kind), 18, 0.55);
@@ -253,10 +257,14 @@ export class OrbitEngine {
 
   private registerHit(id: number, kind: 'obstacle' | 'laser') {
     const { x, y } = this.orbPosition();
+    if (this.effects.protection > 0) {
+      this.removeHazard(id, kind);
+      this.particles.ring(x, y, PALETTE.ice, 0.3, 0.6);
+      return;
+    }
     if (this.effects.shield > 0) {
       this.effects.shield = 0;
-      if (kind === 'obstacle') this.obstacles = this.obstacles.filter((item) => item.id !== id);
-      else this.lasers = this.lasers.filter((item) => item.id !== id);
+      this.removeHazard(id, kind);
       this.events.push({ type: 'shield-break' });
       this.particles.ring(x, y, PALETTE.cyan, 0.28, 0.6);
       this.particles.burst(x, y, PALETTE.cyan, 30, 0.8);
@@ -267,6 +275,11 @@ export class OrbitEngine {
     this.particles.burst(x, y, PALETTE.rose, 56, 1);
     this.particles.ring(x, y, PALETTE.rose, 0.45, 0.8);
     this.particles.ring(x, y, PALETTE.amber, 0.3, 0.6);
+  }
+
+  private removeHazard(id: number, kind: 'obstacle' | 'laser') {
+    if (kind === 'obstacle') this.obstacles = this.obstacles.filter((item) => item.id !== id);
+    else this.lasers = this.lasers.filter((item) => item.id !== id);
   }
 
   private spawn(dt: number, difficulty: number) {
@@ -288,7 +301,7 @@ export class OrbitEngine {
     t.coin -= dt;
     if (t.coin <= 0) {
       this.spawnCoinTrail(difficulty);
-      t.coin = randomBetween(1.4, 2.4);
+      t.coin = randomBetween(2.15, 3.7);
     }
 
     t.powerup -= dt;
@@ -345,8 +358,27 @@ export class OrbitEngine {
     const lane = randomLane();
     const angle = wrapAngle(this.player.angle + randomBetween(2.4, 3.4));
     if (this.overlapsLane(lane, angle, 0, 0.15)) return;
-    const kind = pickWeighted<PowerupKind>({ shield: 28, slow: 24, magnet: 24, double: 24 });
+    const kind = pickWeighted<Exclude<PowerupKind, 'protection'>>({ shield: 28, slow: 24, magnet: 24, double: 24 });
     this.pickups.push({ id: this.nextId++, lane, angle, kind });
+  }
+
+  private spawnProtectionMilestones() {
+    const milestone = Math.floor(this.score / PROTECTION_MILESTONE_POINTS);
+    while (this.protectionMilestone < milestone) {
+      this.protectionMilestone += 1;
+      this.spawnProtection();
+    }
+  }
+
+  private spawnProtection() {
+    let angle = 0;
+    let lane: Lane = 0;
+    for (let attempt = 0; attempt < 6; attempt++) {
+      lane = randomLane();
+      angle = wrapAngle(this.player.angle + randomBetween(2.4, 2.9));
+      if (!this.overlapsLane(lane, angle, 0, 0.15)) break;
+    }
+    this.pickups.push({ id: this.nextId++, lane, angle, kind: 'protection' });
   }
 
   private overlapsLane(lane: Lane, angle: number, length: number, pad: number): boolean {
@@ -381,5 +413,7 @@ export function powerupColor(kind: PowerupKind): string {
       return PALETTE.amber;
     case 'double':
       return PALETTE.mint;
+    case 'protection':
+      return PALETTE.ice;
   }
 }

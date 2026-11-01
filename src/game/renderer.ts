@@ -7,7 +7,7 @@ export type Star = { x: number; y: number; size: number; phase: number; speed: n
 
 export type RenderView = { width: number; height: number; time: number };
 
-const POWERUP_GLYPH: Record<PowerupKind, string> = { shield: 'SH', slow: 'SL', magnet: 'MG', double: '2X' };
+const POWERUP_GLYPH: Record<Exclude<PowerupKind, 'protection'>, string> = { shield: 'SH', slow: 'SL', magnet: 'MG', double: '2X' };
 const ORBIT_MARKERS = 28;
 
 export function createStars(count: number): Star[] {
@@ -255,6 +255,26 @@ function drawPickup(ctx: CanvasRenderingContext2D, pickup: Pickup, time: number)
     ctx.lineTo(-0.026, 0);
     ctx.closePath();
     ctx.fill();
+  } else if (pickup.kind === 'protection') {
+    const pulse = 1 + 0.1 * Math.sin(time * 4 + pickup.id);
+    ctx.scale(pulse, pulse);
+    ctx.rotate(time * 0.9);
+    ctx.shadowColor = PALETTE.ice;
+    ctx.shadowBlur = 22;
+    ctx.fillStyle = 'rgba(244, 253, 255, 0.95)';
+    ctx.strokeStyle = PALETTE.blue;
+    ctx.lineWidth = 0.008;
+    drawHexagon(ctx, 0.04);
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(61, 123, 255, 0.9)';
+    ctx.lineWidth = 0.007;
+    ctx.beginPath();
+    ctx.arc(0, 0, 0.056, 0, Math.PI * 2);
+    ctx.setLineDash([0.02, 0.02]);
+    ctx.stroke();
+    ctx.setLineDash([]);
   } else {
     const color = powerupColor(pickup.kind);
     const pulse = 1 + 0.08 * Math.sin(time * 5 + pickup.id);
@@ -276,6 +296,18 @@ function drawPickup(ctx: CanvasRenderingContext2D, pickup: Pickup, time: number)
     ctx.fillText(POWERUP_GLYPH[pickup.kind], 0, 0.002);
   }
   ctx.restore();
+}
+
+function drawHexagon(ctx: CanvasRenderingContext2D, radius: number) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const angle = (Math.PI / 3) * i;
+    const px = Math.cos(angle) * radius;
+    const py = Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
 }
 
 function drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]) {
@@ -356,6 +388,22 @@ function drawPlayer(ctx: CanvasRenderingContext2D, engine: OrbitEngine, time: nu
       ctx.lineDashOffset = -time * 0.8;
       ctx.beginPath();
       ctx.arc(x, y, ORB_RADIUS * 2.6, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
+  if (engine.effects.protection > 0) {
+    const blinking = engine.effects.protection < 1 && Math.floor(time * 10) % 2 === 0;
+    if (!blinking) {
+      const pulse = 0.5 + 0.5 * Math.sin(time * 6);
+      ctx.strokeStyle = PALETTE.ice;
+      ctx.globalAlpha = 0.55 + 0.35 * pulse;
+      ctx.lineWidth = 0.008;
+      ctx.shadowColor = PALETTE.ice;
+      ctx.shadowBlur = 20;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(x, y, ORB_RADIUS * 3.4 + 0.004 * pulse, 0, Math.PI * 2);
       ctx.stroke();
     }
   }

@@ -20,7 +20,7 @@ const EMPTY_SNAPSHOT: HudSnapshot = {
   chain: 0,
   multiplier: 1,
   chainRatio: 0,
-  effects: { shield: 0, slow: 0, magnet: 0, double: 0 },
+  effects: { shield: 0, slow: 0, magnet: 0, double: 0, protection: 0 },
   shield: false,
   difficulty: 0,
 };
